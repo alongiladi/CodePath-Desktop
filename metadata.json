@@ -1,0 +1,6 @@
+{
+  "name": "CodePath",
+  "description": "Interactive programming learning platform featuring hands-on micro-lessons, code practice, architecture code quality tests, and Code Mentor guidance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
