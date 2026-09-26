@@ -4,19 +4,17 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { useAuth } from '../../firebase/AuthContext';
 import { 
   Menu, 
-  Moon, 
-  Sun, 
   Volume2, 
   VolumeX, 
   Sparkles, 
   Flame, 
   Zap,
   Languages,
-  LogIn,
   LogOut,
-  Cloud,
-  CheckCircle2
+  CheckCircle2,
+  Code
 } from 'lucide-react';
+import { CoseMascot } from '../common/CoseMascot';
 
 interface TopBarProps {
   currentScreen: NavScreen;
@@ -34,8 +32,6 @@ interface TopBarProps {
 export const TopBar: React.FC<TopBarProps> = ({
   currentScreen,
   user,
-  isDarkMode,
-  onToggleDarkMode,
   onToggleSound,
   onOpenMentor,
   onToggleMobileMenu,
@@ -47,167 +43,126 @@ export const TopBar: React.FC<TopBarProps> = ({
   const { currentUser, signInWithGoogle, signOut } = useAuth();
   const [showAuthMenu, setShowAuthMenu] = useState(false);
 
-  const getScreenTitle = () => {
-    switch (currentScreen) {
-      case 'dashboard':
-        return t('navDashboard');
-      case 'courses':
-        return t('navCourses');
-      case 'lesson':
-        return lessonTitle ? `${courseTitle || (language === 'he' ? 'קורס' : 'Course')} / ${lessonTitle}` : (language === 'he' ? 'שיעור אינטראקטיבי' : 'Interactive Lesson');
-      case 'practice':
-        return t('navPractice');
-      case 'architecture':
-        return t('navArchitecture');
-      case 'leaderboard':
-        return t('navLeaderboard');
-      case 'quiz':
-        return t('navQuiz');
-      case 'achievements':
-      case 'stats':
-        return t('navAchievements');
-      case 'settings':
-        return t('navSettings');
-      default:
-        return 'CodePath';
-    }
-  };
-
   return (
     <header
       id="app-topbar"
-      className="sticky top-0 z-30 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-3 sm:px-6 flex items-center justify-between transition-colors"
+      className="sticky top-0 z-30 h-[70px] bg-white border-b-2 border-[#E5E5E5] px-4 sm:px-6 flex items-center justify-between transition-colors select-none"
     >
-      {/* Left section: Mobile menu trigger + Screen title */}
-      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+      {/* Zone 1: Mobile menu trigger + Brand Wordmark */}
+      <div className="flex items-center gap-3 min-w-0">
         <button
           id="mobile-menu-trigger"
           onClick={onToggleMobileMenu}
-          className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+          className="lg:hidden p-2 rounded-[12px] text-[#777777] hover:bg-[#F7F7F7] hover:text-[#3C3C3C] transition-colors cursor-pointer shrink-0"
           aria-label="Open mobile navigation"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="flex flex-col min-w-0">
-          <h1 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-white truncate max-w-[150px] sm:max-w-md">
-            {getScreenTitle()}
-          </h1>
-          {currentScreen === 'dashboard' && (
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline truncate">
-              {t('topbarWelcomeBack')}, {currentUser?.displayName || user.name} • {t('topbarDailyGoalReady')}
+        {/* Brand Lockup */}
+        <div 
+          onClick={() => onNavigate('dashboard')}
+          className="flex items-center gap-2.5 cursor-pointer group"
+        >
+          <CoseMascot mood="happy" size="sm" />
+          <div className="flex flex-col">
+            <span className="font-extrabold text-xl tracking-tight text-[#3C3C3C] group-hover:text-[#58CC02] transition-colors">
+              Cose<span className="text-[#58CC02]">Path</span>
             </span>
-          )}
+          </div>
         </div>
       </div>
 
-      {/* Right section: Global Stats & Controls */}
-      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-        {/* Language Switcher Button (Hebrew / English) */}
+      {/* Zone 2: Streak & XP Metrics */}
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+        {/* Streak Counter Pill */}
+        <div
+          id="topbar-streak-pill"
+          title={t('topbarStreakTitle')}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFF5E6] border-2 border-[#FFD9A6] text-[#FF9600] text-xs sm:text-sm font-extrabold cursor-default"
+        >
+          <Flame className="w-4 h-4 fill-[#FF9600] text-[#FF9600] animate-pulse" />
+          <span>{user.streak}</span>
+        </div>
+
+        {/* XP Points Pill */}
+        <div
+          id="topbar-xp-pill"
+          title={t('topbarXpTitle')}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFFBE6] border-2 border-[#FFE885] text-[#CC9900] text-xs sm:text-sm font-extrabold cursor-default"
+        >
+          <Zap className="w-4 h-4 fill-[#FFC800] text-[#FFC800]" />
+          <span>{user.xp.toLocaleString()} <span className="hidden sm:inline">XP</span></span>
+        </div>
+
+        {/* Language Switcher (Hebrew / English) */}
         <button
           id="toggle-language-btn"
           onClick={toggleLanguage}
           title={language === 'en' ? 'עבור למצב עברית (ישראל)' : 'Switch to English (US)'}
-          className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors cursor-pointer shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] bg-white border-2 border-[#E5E5E5] border-b-4 hover:border-[#AFAFAF] active:border-b-2 active:translate-y-[2px] text-[#3C3C3C] text-xs font-extrabold transition-all cursor-pointer"
           aria-label="Toggle application language"
         >
-          <Languages className="w-3.5 h-3.5 text-indigo-500" />
-          <span className="text-[11px] sm:text-xs">{language === 'en' ? '🇮🇱 עברית' : '🇺🇸 English'}</span>
+          <Languages className="w-3.5 h-3.5 text-[#1CB0F6]" />
+          <span className="text-xs">{language === 'en' ? '🇮🇱 עברית' : '🇺🇸 EN'}</span>
         </button>
 
-        {/* Streak Pill */}
-        <div
-          id="topbar-streak-pill"
-          title={t('topbarStreakTitle')}
-          className="hidden xs:flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-300 text-xs font-bold"
-        >
-          <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 animate-pulse" />
-          <span>{user.streak}d</span>
-        </div>
-
-        {/* XP Pill */}
-        <div
-          id="topbar-xp-pill"
-          title={t('topbarXpTitle')}
-          className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-bold"
-        >
-          <Zap className="w-3.5 h-3.5 fill-indigo-500 text-indigo-500" />
-          <span>{user.xp.toLocaleString()} <span className="hidden sm:inline">XP</span></span>
-        </div>
-
-        {/* Audio Toggle */}
+        {/* Sound Toggle */}
         <button
           id="toggle-sound-btn"
           onClick={onToggleSound}
           title={user.soundEnabled ? t('topbarSoundMute') : t('topbarSoundEnable')}
-          className="p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer hidden sm:block"
-          aria-label="Toggle UI Sound Effects"
+          className="p-2 rounded-[12px] bg-white border-2 border-[#E5E5E5] border-b-4 hover:border-[#AFAFAF] active:border-b-2 active:translate-y-[2px] text-[#777777] hover:text-[#3C3C3C] transition-all cursor-pointer hidden sm:flex items-center justify-center"
+          aria-label="Toggle sound"
         >
           {user.soundEnabled ? (
-            <Volume2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <Volume2 className="w-4 h-4 text-[#58CC02]" />
           ) : (
-            <VolumeX className="w-4 h-4" />
+            <VolumeX className="w-4 h-4 text-[#AFAFAF]" />
           )}
         </button>
 
-        {/* Dark Mode Toggle */}
-        <button
-          id="toggle-dark-mode-btn"
-          onClick={onToggleDarkMode}
-          title={isDarkMode ? t('topbarDarkLight') : t('topbarDarkDark')}
-          className="p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-          aria-label="Toggle dark mode"
-        >
-          {isDarkMode ? (
-            <Sun className="w-4 h-4 text-amber-400" />
-          ) : (
-            <Moon className="w-4 h-4 text-slate-600" />
-          )}
-        </button>
-
-        {/* Google Auth / Profile Button */}
+        {/* Google Auth / User Avatar */}
         {currentUser ? (
           <div className="relative">
             <button
               id="topbar-user-avatar-btn"
               onClick={() => setShowAuthMenu(!showAuthMenu)}
-              className="flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer"
-              title="Firebase Cloud Synced"
+              className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-[14px] border-2 border-[#E5E5E5] bg-white hover:border-[#58CC02] transition-colors cursor-pointer"
             >
               <img
                 src={currentUser.photoURL || user.avatar}
                 alt={currentUser.displayName || 'User'}
-                className="w-6 h-6 rounded-full object-cover ring-2 ring-emerald-500"
+                className="w-7 h-7 rounded-full object-cover ring-2 ring-[#58CC02]"
               />
-              <span className="hidden md:inline text-xs font-semibold text-slate-800 dark:text-slate-200 max-w-[90px] truncate">
-                {currentUser.displayName?.split(' ')[0] || 'User'}
+              <span className="hidden md:inline text-xs font-extrabold text-[#3C3C3C] max-w-[80px] truncate">
+                {currentUser.displayName?.split(' ')[0] || user.name}
               </span>
-              <Cloud className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             </button>
 
             {showAuthMenu && (
-              <div 
-                className={`absolute ${isRtl ? 'left-0' : 'right-0'} mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-3 z-50`}
+              <div
+                className={`absolute ${isRtl ? 'left-0' : 'right-0'} mt-2 w-56 bg-white rounded-[16px] shadow-xl border-2 border-[#E5E5E5] p-3 z-50`}
               >
-                <div className="flex items-center gap-2.5 pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2.5 pb-2 mb-2 border-b border-[#E5E5E5]">
                   <img
                     src={currentUser.photoURL || user.avatar}
                     alt="Avatar"
                     className="w-8 h-8 rounded-full"
                   />
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                    <p className="text-xs font-extrabold text-[#3C3C3C] truncate">
                       {currentUser.displayName || user.name}
                     </p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                    <p className="text-[10px] text-[#777777] truncate">
                       {currentUser.email}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mb-3">
+                <div className="flex items-center gap-1.5 text-[11px] text-[#58A700] font-bold mb-3">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>{language === 'he' ? 'מסונכרן עם Firestore' : 'Synced to Firestore Cloud'}</span>
+                  <span>{language === 'he' ? 'מסונכרן עם ענן Firestore' : 'Synced to Firestore'}</span>
                 </div>
 
                 <button
@@ -215,10 +170,10 @@ export const TopBar: React.FC<TopBarProps> = ({
                     signOut();
                     setShowAuthMenu(false);
                   }}
-                  className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 text-xs font-semibold transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-[12px] bg-[#FFE0E0] hover:bg-[#FFCCCC] text-[#FF4B4B] text-xs font-extrabold transition-colors cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span>{language === 'he' ? 'התנתק מחשבון Google' : 'Sign Out'}</span>
+                  <span>{language === 'he' ? 'התנתק מחשבון' : 'Sign Out'}</span>
                 </button>
               </div>
             )}
@@ -227,8 +182,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           <button
             id="google-signin-btn"
             onClick={signInWithGoogle}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-xs font-bold shadow-sm transition-all transform active:scale-95 cursor-pointer"
-            title="Sign in with Google to sync Firestore data"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] bg-white border-2 border-[#E5E5E5] border-b-4 hover:border-[#AFAFAF] active:border-b-2 active:translate-y-[2px] text-[#3C3C3C] text-xs font-extrabold transition-all cursor-pointer"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
               <path
@@ -248,15 +202,15 @@ export const TopBar: React.FC<TopBarProps> = ({
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span className="hidden sm:inline">{language === 'he' ? 'התחבר עם Google' : 'Sign In'}</span>
+            <span className="hidden sm:inline">{language === 'he' ? 'התחבר' : 'Sign In'}</span>
           </button>
         )}
 
-        {/* Code Mentor AI Button */}
+        {/* Code Mentor AI CTA */}
         <button
           id="topbar-mentor-btn"
           onClick={onOpenMentor}
-          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold shadow-sm shadow-indigo-500/25 transition-all transform active:scale-95 cursor-pointer"
+          className="btn-secondary text-xs font-extrabold !py-2 !px-3.5 !rounded-[14px]"
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span className="hidden md:inline">{t('topbarMentorBtn')}</span>
@@ -266,4 +220,3 @@ export const TopBar: React.FC<TopBarProps> = ({
     </header>
   );
 };
-

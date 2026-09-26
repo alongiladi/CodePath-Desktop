@@ -2,18 +2,16 @@ import React, { useState } from 'react';
 import { Lesson, UserProfile, NavScreen } from '../../types';
 import { LESSONS, COURSES } from '../../data/mockData';
 import { ProgressBar } from '../common/ProgressBar';
-import { Badge } from '../common/Badge';
+import { CodeBlock } from '../code/CodeBlock';
+import { InlineCode } from '../code/InlineCode';
+import { CoseMascot } from '../common/CoseMascot';
 import { 
   Play, 
   CheckCircle2, 
-  Copy, 
-  Check, 
   Lightbulb, 
   Sparkles, 
   ArrowRight, 
   ArrowLeft, 
-  Terminal, 
-  HelpCircle, 
   Layers, 
   BookOpen,
   Code2,
@@ -40,7 +38,6 @@ export const LessonView: React.FC<LessonViewProps> = ({
   const course = COURSES.find((c) => c.id === lesson.courseId) || COURSES[0];
 
   const [activeStepTab, setActiveStepTab] = useState<'concept' | 'example' | 'breakdown' | 'tip'>('concept');
-  const [copiedCode, setCopiedCode] = useState(false);
   const [selectedLine, setSelectedLine] = useState<number | null>(2);
   const isCompleted = user.completedLessons.includes(lesson.id);
 
@@ -48,65 +45,58 @@ export const LessonView: React.FC<LessonViewProps> = ({
   const currentLessonIndex = lesson.order;
   const sectionProgressPercent = Math.round((currentLessonIndex / (lesson.totalInCourse || 28)) * 100);
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(lesson.codeSnippet);
-    soundFx.playClick();
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
-  };
-
   const handleMarkComplete = () => {
     soundFx.playSuccess();
     onCompleteLesson(lesson.id, lesson.courseId);
   };
 
   const tabs = [
-    { id: 'concept', label: '1. Concept', icon: <BookOpen className="w-3.5 h-3.5" /> },
-    { id: 'example', label: '2. Code Example', icon: <Code2 className="w-3.5 h-3.5" /> },
-    { id: 'breakdown', label: '3. Line by Line', icon: <Layers className="w-3.5 h-3.5" /> },
-    { id: 'tip', label: '4. Important Tip', icon: <Lightbulb className="w-3.5 h-3.5" /> },
+    { id: 'concept', label: '1. Concept', icon: <BookOpen className="w-4 h-4" /> },
+    { id: 'example', label: '2. Code Example', icon: <Code2 className="w-4 h-4" /> },
+    { id: 'breakdown', label: '3. Line by Line', icon: <Layers className="w-4 h-4" /> },
+    { id: 'tip', label: '4. Important Tip', icon: <Lightbulb className="w-4 h-4" /> },
   ] as const;
 
   return (
-    <div id="lesson-screen" className="max-w-5xl mx-auto space-y-6 pb-20">
-      {/* Top Breadcrumb & Navigation Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+    <div id="lesson-screen" className="max-w-4xl mx-auto space-y-8 pb-20">
+      {/* Top Breadcrumb & Progress Header */}
+      <div className="cose-card p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-xs font-extrabold text-[#777777] uppercase tracking-wider">
             <span
               onClick={() => onNavigate('courses')}
-              className="hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer"
+              className="hover:text-[#58CC02] cursor-pointer transition-colors"
             >
               {lesson.courseTitle}
             </span>
             <span>/</span>
-            <span className="text-slate-700 dark:text-slate-200">Module 3: Repetition</span>
+            <span>Module 3: Repetition</span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#3C3C3C]">
               {lesson.title}
-            </h2>
+            </h1>
             {isCompleted && (
-              <Badge variant="success" size="sm">
-                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                <span>Completed</span>
-              </Badge>
+              <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#DBF8C5] text-[#58A700] border border-[#58CC02]/40">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                COMPLETED
+              </span>
             )}
           </div>
         </div>
 
-        {/* Lesson counter & section progress */}
-        <div className="sm:text-right space-y-1 min-w-[160px]">
-          <div className="flex items-center justify-between sm:justify-end gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+        {/* Section Progress */}
+        <div className="sm:text-right space-y-1.5 min-w-[180px]">
+          <div className="flex items-center justify-between sm:justify-end gap-2 text-xs font-extrabold text-[#777777]">
             <span>Lesson {lesson.order} of {lesson.totalInCourse}</span>
-            <span className="text-indigo-600 dark:text-indigo-400">({sectionProgressPercent}%)</span>
+            <span className="text-[#58A700]">({sectionProgressPercent}%)</span>
           </div>
-          <ProgressBar value={sectionProgressPercent} color="indigo" size="sm" />
+          <ProgressBar value={sectionProgressPercent} color="green" size="sm" />
         </div>
       </div>
 
-      {/* Bite-Sized Tab Stepper */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200 dark:border-slate-800 scrollbar-none">
+      {/* Stepper Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {tabs.map((tab) => {
           const isActive = activeStepTab === tab.id;
           return (
@@ -117,10 +107,10 @@ export const LessonView: React.FC<LessonViewProps> = ({
                 soundFx.playClick();
                 setActiveStepTab(tab.id);
               }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-[14px] text-xs sm:text-sm font-extrabold uppercase tracking-wide whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
+                  ? 'bg-[#58CC02] text-white border-b-4 border-[#58A700]'
+                  : 'bg-white text-[#777777] hover:text-[#3C3C3C] border-2 border-[#E5E5E5] border-b-4 hover:border-[#AFAFAF]'
               }`}
             >
               {tab.icon}
@@ -130,152 +120,129 @@ export const LessonView: React.FC<LessonViewProps> = ({
         })}
       </div>
 
-      {/* Main Content Area Based on Active Step */}
-      <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-6">
-        {/* Step 1: Concept */}
-        {activeStepTab === 'concept' && (
-          <div className="space-y-6">
+      {/* Step 1: Concept */}
+      {activeStepTab === 'concept' && (
+        <div className="cose-card p-6 sm:p-8 space-y-6">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-[#3C3C3C]">
                 {lesson.conceptTitle}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              </h2>
+              <p className="text-sm text-[#777777] font-semibold mt-1">
                 {lesson.subtitle}
               </p>
             </div>
-
-            <div className="space-y-4 text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
-              {lesson.explanation.map((paragraph, idx) => (
-                <p key={idx}>{paragraph}</p>
-              ))}
-            </div>
-
-            {lesson.realWorldAnalogy && (
-              <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
-                  <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Real-World Mental Model</span>
-                </div>
-                <p className="text-xs sm:text-sm text-amber-950 dark:text-amber-100/90 leading-relaxed font-medium">
-                  {lesson.realWorldAnalogy}
-                </p>
-              </div>
-            )}
-
-            <div className="pt-4 flex items-center justify-between">
-              <span className="text-xs text-slate-400">Next up: Live syntax code example</span>
-              <button
-                id="lesson-next-tab-btn-1"
-                onClick={() => {
-                  soundFx.playClick();
-                  setActiveStepTab('example');
-                }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors"
-              >
-                <span>Continue to Code Example</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+            <CoseMascot mood="thinking" size="md" />
           </div>
-        )}
 
-        {/* Step 2: Code Example */}
-        {activeStepTab === 'example' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  Python Code Demonstration
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Inspect the working syntax below and observe how the loop increments.
-                </p>
-              </div>
-              <button
-                id="copy-lesson-code-btn"
-                onClick={handleCopyCode}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
-              >
-                {copiedCode ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-500" />
-                    <span className="text-emerald-600 dark:text-emerald-400">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Code</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Code Block with simulated terminal output */}
-            <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 font-mono text-xs sm:text-sm shadow-md">
-              <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-slate-400 text-xs">
-                <span className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
-                  <span className="ml-2 font-semibold text-slate-300">while_loop_demo.py</span>
-                </span>
-                <span className="text-[11px] font-bold text-indigo-400 uppercase">Python 3.12</span>
-              </div>
-
-              <pre className="p-4 overflow-x-auto text-slate-200 leading-relaxed">
-                <code>{lesson.codeSnippet}</code>
-              </pre>
-
-              {lesson.simulatedOutput && (
-                <div className="border-t border-slate-800 bg-slate-900/90 p-3.5">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
-                    <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Execution Output:</span>
-                  </div>
-                  <pre className="text-xs text-emerald-400 overflow-x-auto">
-                    {lesson.simulatedOutput}
-                  </pre>
-                </div>
-              )}
-            </div>
-
-            <div className="pt-2 flex items-center justify-between">
-              <button
-                onClick={() => {
-                  soundFx.playClick();
-                  setActiveStepTab('concept');
-                }}
-                className="text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
-              >
-                ← Back to Concept
-              </button>
-              <button
-                id="lesson-next-tab-btn-2"
-                onClick={() => {
-                  soundFx.playClick();
-                  setActiveStepTab('breakdown');
-                }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors"
-              >
-                <span>Line-by-Line Explanation</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+          <div className="space-y-4 text-[#3C3C3C] text-sm sm:text-base leading-relaxed font-medium">
+            {lesson.explanation.map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
           </div>
-        )}
 
-        {/* Step 3: Line by Line Breakdown */}
-        {activeStepTab === 'breakdown' && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                Line-by-Line Code Dissection
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Click any line of code to understand its purpose and mechanics.
+          {lesson.realWorldAnalogy && (
+            <div className="p-5 rounded-[16px] bg-[#FFFBE6] border-2 border-[#FFE885] space-y-2">
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#CC9900]">
+                <Lightbulb className="w-4 h-4 text-[#FFC800] fill-[#FFC800]" />
+                <span>Real-World Mental Model</span>
+              </div>
+              <p className="text-xs sm:text-sm text-[#3C3C3C] leading-relaxed font-semibold">
+                {lesson.realWorldAnalogy}
               </p>
             </div>
+          )}
 
+          <div className="flex items-center justify-between pt-4 border-t-2 border-[#E5E5E5]">
+            <button
+              onClick={() => onOpenMentor(`Explain "${lesson.conceptTitle}" with another beginner-friendly example`)}
+              className="btn-outline text-xs font-extrabold"
+            >
+              <Sparkles className="w-4 h-4 text-[#1CB0F6]" />
+              <span>Ask Mentor For Nudge</span>
+            </button>
+            <button
+              onClick={() => setActiveStepTab('example')}
+              className="btn-primary"
+            >
+              <span>Next: Code Example</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Code Example */}
+      {activeStepTab === 'example' && (
+        <div className="cose-card p-6 sm:p-8 space-y-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#3C3C3C]">
+              Interactive Code Example
+            </h2>
+            <p className="text-sm text-[#777777] font-semibold mt-1">
+              Read through the code snippet below. Notice how each token behaves.
+            </p>
+          </div>
+
+          {/* Syntax Highlighted Code Block (LTR & Pre-wrap always) */}
+          <CodeBlock
+            code={lesson.codeSnippet}
+            language="python"
+            showLineNumbers={true}
+          />
+
+          <div className="p-4 rounded-[16px] bg-[#F7F7F7] border-2 border-[#E5E5E5] space-y-2">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#777777]">
+              Expected Output
+            </span>
+            <pre
+              dir="ltr"
+              className="font-mono text-xs text-[#3C3C3C] whitespace-pre-wrap break-all text-left bg-white p-3 rounded-[10px] border border-[#E5E5E5]"
+            >
+              {lesson.simulatedOutput || 'T-minus 5\nT-minus 4\nT-minus 3\nT-minus 2\nT-minus 1\nBlast off!'}
+            </pre>
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t-2 border-[#E5E5E5]">
+            <button
+              onClick={() => setActiveStepTab('concept')}
+              className="btn-outline text-xs font-extrabold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Concept</span>
+            </button>
+            <button
+              onClick={() => setActiveStepTab('breakdown')}
+              className="btn-primary"
+            >
+              <span>Next: Line Breakdown</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Line by Line Breakdown */}
+      {activeStepTab === 'breakdown' && (
+        <div className="cose-card p-6 sm:p-8 space-y-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#3C3C3C]">
+              Line-by-Line Breakdown
+            </h2>
+            <p className="text-sm text-[#777777] font-semibold mt-1">
+              Click any line in the code block or list below to see its exact mechanics.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <CodeBlock
+              code={lesson.codeSnippet}
+              language="python"
+              selectedLine={selectedLine}
+              onLineClick={(num) => setSelectedLine(num)}
+            />
+
+            {/* Explanations List */}
             <div className="space-y-3">
               {lesson.lineBreakdown.map((item) => {
                 const isSelected = selectedLine === item.lineNumber;
@@ -286,160 +253,91 @@ export const LessonView: React.FC<LessonViewProps> = ({
                       soundFx.playClick();
                       setSelectedLine(item.lineNumber);
                     }}
-                    className={`rounded-xl border p-4 transition-all cursor-pointer ${
+                    className={`p-3.5 rounded-[14px] border-2 cursor-pointer transition-all ${
                       isSelected
-                        ? 'border-indigo-500 dark:border-indigo-400 bg-indigo-50/60 dark:bg-indigo-950/40 shadow-xs'
-                        : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'bg-[#DBF8C5] border-[#58CC02] shadow-xs'
+                        : 'bg-white border-[#E5E5E5] hover:border-[#AFAFAF]'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                          Line {item.lineNumber}
-                        </span>
-                        <code className="text-xs font-mono font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100/60 dark:bg-indigo-900/60 px-2 py-0.5 rounded">
-                          {item.code}
-                        </code>
-                      </div>
-                      <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
-                        {isSelected ? 'Active' : 'Inspect'}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-5 h-5 rounded-full bg-[#58CC02] text-white font-extrabold text-[11px] flex items-center justify-center">
+                        {item.lineNumber}
                       </span>
+                      <InlineCode>{item.code}</InlineCode>
                     </div>
-
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed pl-1">
+                    <p className="text-xs text-[#3C3C3C] font-semibold leading-relaxed">
                       {item.explanation}
                     </p>
                   </div>
                 );
               })}
             </div>
-
-            <div className="pt-2 flex items-center justify-between">
-              <button
-                onClick={() => {
-                  soundFx.playClick();
-                  setActiveStepTab('example');
-                }}
-                className="text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
-              >
-                ← Back to Example
-              </button>
-              <button
-                id="lesson-next-tab-btn-3"
-                onClick={() => {
-                  soundFx.playClick();
-                  setActiveStepTab('tip');
-                }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors"
-              >
-                <span>View Important Tip</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
           </div>
-        )}
 
-        {/* Step 4: Important Tip */}
-        {activeStepTab === 'tip' && (
-          <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 shadow-xs space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
-                  <Lightbulb className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
-                    Important Tip & Gotcha
-                  </span>
-                  <h4 className="text-base font-bold text-slate-900 dark:text-white">
-                    {lesson.importantTip.title}
-                  </h4>
-                </div>
-              </div>
+          <div className="flex items-center justify-between pt-4 border-t-2 border-[#E5E5E5]">
+            <button
+              onClick={() => setActiveStepTab('example')}
+              className="btn-outline text-xs font-extrabold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Code</span>
+            </button>
+            <button
+              onClick={() => setActiveStepTab('tip')}
+              className="btn-primary"
+            >
+              <span>Next: Golden Tip</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
-              <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
-                {lesson.importantTip.description}
+      {/* Step 4: Golden Tip & Completion */}
+      {activeStepTab === 'tip' && (
+        <div className="cose-card p-6 sm:p-8 space-y-6">
+          <div className="flex items-center gap-4">
+            <CoseMascot mood="celebrating" size="md" />
+            <div>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-[#3C3C3C]">
+                {lesson.importantTip?.title || 'Pro-Coder Rule & Common Trap'}
+              </h2>
+              <p className="text-sm text-[#777777] font-semibold mt-1">
+                Keep this in your memory bank for live coding sessions.
               </p>
             </div>
-
-            <div className="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                <div>
-                  <h5 className="font-bold text-sm text-indigo-950 dark:text-indigo-200">
-                    Have doubts about this lesson?
-                  </h5>
-                  <p className="text-xs text-indigo-800 dark:text-indigo-300">
-                    Code Mentor can break down while loops further or provide alternative analogies.
-                  </p>
-                </div>
-              </div>
-              <button
-                id="lesson-ask-mentor-btn"
-                onClick={() => onOpenMentor(`Explain more about: ${lesson.title}`)}
-                className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white font-bold text-xs border border-indigo-200 dark:border-slate-700 transition-colors shrink-0"
-              >
-                Ask Mentor
-              </button>
-            </div>
           </div>
-        )}
-      </div>
 
-      {/* Primary Action Footer Bar */}
-      <div className="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          {!isCompleted ? (
+          <div className="p-6 rounded-[16px] bg-[#FFF5E6] border-2 border-[#FFD9A6] space-y-2">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#CC7A00]">
+              Key Takeaway
+            </span>
+            <p className="text-sm sm:text-base text-[#3C3C3C] font-bold leading-relaxed">
+              {lesson.importantTip?.description || (typeof lesson.importantTip === 'string' ? lesson.importantTip : '')}
+            </p>
+          </div>
+
+          {/* Action Row */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t-2 border-[#E5E5E5]">
+            <button
+              onClick={() => onNavigate('practice', { exerciseId: 'ex-python-while-1' })}
+              className="btn-secondary w-full sm:w-auto"
+            >
+              <Play className="w-4 h-4 fill-white" />
+              <span>Jump Straight to Live Practice</span>
+            </button>
+
             <button
               id="lesson-mark-complete-btn"
               onClick={handleMarkComplete}
-              className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors"
+              className="btn-primary w-full sm:w-auto"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Mark as Completed (+25 XP)</span>
+              <span>Mark Lesson Complete (+50 XP)</span>
             </button>
-          ) : (
-            <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Lesson Completed</span>
-            </span>
-          )}
+          </div>
         </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Test My Knowledge Quiz button */}
-          <button
-            id="lesson-test-knowledge-btn"
-            onClick={() => onNavigate('quiz', { quizId: lesson.quizId, lessonId: lesson.id })}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-colors"
-          >
-            <HelpCircle className="w-4 h-4" />
-            <span>Test My Knowledge</span>
-          </button>
-
-          {/* Interactive Code Practice button */}
-          <button
-            id="lesson-practice-code-btn"
-            onClick={() => onNavigate('practice', { exerciseId: lesson.exerciseId, lessonId: lesson.id })}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition-colors"
-          >
-            <Terminal className="w-4 h-4" />
-            <span>Practice in Editor</span>
-          </button>
-
-          {/* Next Lesson */}
-          {lesson.nextLessonId && (
-            <button
-              id="lesson-next-step-btn"
-              onClick={() => onNavigate('lesson', { lessonId: lesson.nextLessonId, courseId: lesson.courseId })}
-              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
-              title="Next lesson"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'success' | 'warning' | 'neutral' | 'outline' | 'purple';
+  variant?: 'primary' | 'success' | 'warning' | 'neutral' | 'outline' | 'purple' | 'streak';
   size?: 'sm' | 'md';
   className?: string;
   id?: string;
@@ -15,21 +15,22 @@ export const Badge: React.FC<BadgeProps> = ({
   className = '',
   id,
 }) => {
-  const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs font-semibold';
+  const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs';
 
   const variantClasses = {
-    primary: 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800',
-    purple: 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800',
-    success: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800',
-    warning: 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800',
-    neutral: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700',
-    outline: 'bg-transparent text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700',
+    primary: 'bg-[#1CB0F6]/10 text-[#1CB0F6] border border-[#1CB0F6]/30',
+    purple: 'bg-[#CE82FF]/10 text-[#CE82FF] border border-[#CE82FF]/30',
+    success: 'bg-[#DBF8C5] text-[#58A700] border border-[#58CC02]/30',
+    warning: 'bg-[#FFC800]/15 text-[#CC7A00] border border-[#FFC800]/40',
+    streak: 'bg-[#FF9600]/15 text-[#CC7A00] border border-[#FF9600]/40',
+    neutral: 'bg-[#F7F7F7] text-[#777777] border border-[#E5E5E5]',
+    outline: 'bg-white text-[#777777] border-2 border-[#E5E5E5]',
   };
 
   return (
     <span
       id={id}
-      className={`inline-flex items-center gap-1 rounded-full whitespace-nowrap ${sizeClasses} ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full font-extrabold whitespace-nowrap uppercase tracking-wider ${sizeClasses} ${variantClasses[variant]} ${className}`}
     >
       {children}
     </span>

@@ -21,7 +21,6 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth = 'lg',
   id = 'app-modal',
 }) => {
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -50,7 +49,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"
             aria-hidden="true"
           />
 
@@ -60,15 +59,15 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-            className={`relative w-full ${maxWidthClass} bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden z-10 my-8`}
+            className={`relative w-full ${maxWidthClass} bg-white rounded-[20px] border-2 border-[#E5E5E5] border-b-4 shadow-2xl overflow-hidden z-10 my-8`}
           >
-            <div className="flex items-start justify-between p-5 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-start justify-between p-5 border-b-2 border-[#E5E5E5]">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">
+                <h3 className="text-lg font-extrabold text-[#3C3C3C] leading-snug">
                   {title}
                 </h3>
                 {subtitle && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="text-xs text-[#777777] font-semibold mt-0.5">
                     {subtitle}
                   </p>
                 )}
@@ -76,7 +75,7 @@ export const Modal: React.FC<ModalProps> = ({
               <button
                 id="modal-close-btn"
                 onClick={onClose}
-                className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="p-1.5 text-[#777777] hover:text-[#3C3C3C] rounded-[10px] hover:bg-[#F7F7F7] transition-colors cursor-pointer"
                 aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />

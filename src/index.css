@@ -1,40 +1,277 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --color-primary: #58CC02;
+    --color-primary-dark: #58A700;
+    --color-primary-light: #89E219;
+    --color-primary-pale: #DBF8C5;
+    
+    --color-secondary: #1CB0F6;
+    --color-secondary-dark: #1B99D6;
+    
+    --color-accent: #FF4B4B;
+    --color-accent-dark: #CC3B3B;
+    
+    --color-yellow: #FFC800;
+    --color-streak: #FF9600;
+    --color-streak-dark: #CC7A00;
+    
+    --color-purple: #CE82FF;
+    --color-pink: #FF86D0;
+    
+    --color-bg: #FFFFFF;
+    --color-surface: #F7F7F7;
+    --color-border: #E5E5E5;
+    --color-border-hover: #D7D7D7;
+    
+    --color-ink: #3C3C3C;
+    --color-wolf: #777777;
+    --color-hare: #AFAFAF;
+  }
+
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 500;
+    color: #3C3C3C;
+    background-color: #FFFFFF;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   html[lang="he"] body,
   html[dir="rtl"] body {
-    font-family: 'Rubik', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Rubik', 'Nunito', system-ui, -apple-system, sans-serif;
   }
   
-  code, pre, kbd, .code-mono {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    direction: ltr;
-    text-align: left;
-    unicode-bidi: isolate;
+  /* Strictly enforce LTR for code elements */
+  code, pre, kbd, .code-mono, .code-block, .code-editor, .console-output {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: isolate !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+    overflow-x: hidden !important;
   }
 }
 
-/* Custom scrollbar */
+/* Custom CosePath Duolingo-inspired utilities */
+@layer components {
+  /* Tactile Green Primary Button */
+  .btn-primary {
+    background: #58CC02;
+    color: #FFFFFF;
+    font-weight: 800;
+    border-radius: 16px;
+    border-bottom: 4px solid #58A700;
+    padding: 12px 24px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: filter 180ms ease, transform 180ms ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #89E219;
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(4px);
+    border-bottom-width: 0px;
+    filter: brightness(0.95);
+    margin-bottom: 4px;
+  }
+  .btn-primary:disabled {
+    background: #E5E5E5;
+    border-bottom: 4px solid #D7D7D7;
+    color: #AFAFAF;
+    cursor: not-allowed;
+  }
+
+  /* Tactile Sky Blue Button (Run / Action) */
+  .btn-secondary {
+    background: #1CB0F6;
+    color: #FFFFFF;
+    font-weight: 800;
+    border-radius: 16px;
+    border-bottom: 4px solid #1B99D6;
+    padding: 12px 24px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: filter 180ms ease, transform 180ms ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-secondary:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+  .btn-secondary:active:not(:disabled) {
+    transform: translateY(4px);
+    border-bottom-width: 0px;
+    filter: brightness(0.95);
+    margin-bottom: 4px;
+  }
+  .btn-secondary:disabled {
+    background: #E5E5E5;
+    border-bottom: 4px solid #D7D7D7;
+    color: #AFAFAF;
+    cursor: not-allowed;
+  }
+
+  /* Tactile Orange Streak Button */
+  .btn-streak {
+    background: #FF9600;
+    color: #FFFFFF;
+    font-weight: 800;
+    border-radius: 16px;
+    border-bottom: 4px solid #CC7A00;
+    padding: 12px 24px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: filter 180ms ease, transform 180ms ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-streak:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+  .btn-streak:active:not(:disabled) {
+    transform: translateY(4px);
+    border-bottom-width: 0px;
+    margin-bottom: 4px;
+  }
+
+  /* Tactile Red Error Button */
+  .btn-danger {
+    background: #FF4B4B;
+    color: #FFFFFF;
+    font-weight: 800;
+    border-radius: 16px;
+    border-bottom: 4px solid #CC3B3B;
+    padding: 12px 24px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: filter 180ms ease, transform 180ms ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-danger:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+  .btn-danger:active:not(:disabled) {
+    transform: translateY(4px);
+    border-bottom-width: 0px;
+    margin-bottom: 4px;
+  }
+
+  /* Tactile Outline Button (White) */
+  .btn-outline {
+    background: #FFFFFF;
+    color: #777777;
+    border: 2px solid #E5E5E5;
+    border-bottom: 4px solid #E5E5E5;
+    font-weight: 800;
+    border-radius: 16px;
+    padding: 10px 20px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: all 180ms ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-outline:hover:not(:disabled) {
+    color: #3C3C3C;
+    border-color: #AFAFAF;
+  }
+  .btn-outline:active:not(:disabled) {
+    transform: translateY(4px);
+    border-bottom-width: 2px;
+    margin-bottom: 2px;
+  }
+
+  /* Tactile 3D Cards */
+  .cose-card {
+    background: #FFFFFF;
+    border: 2px solid #E5E5E5;
+    border-bottom: 4px solid #E5E5E5;
+    border-radius: 16px;
+    padding: 24px;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+  .cose-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 #D7D7D7;
+  }
+
+  /* Form Input */
+  .cose-input {
+    background: #FFFFFF;
+    border: 2px solid #E5E5E5;
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #3C3C3C;
+    font-weight: 500;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+    outline: none;
+  }
+  .cose-input:focus {
+    border-color: #1CB0F6;
+    box-shadow: 0 0 0 3px rgba(28, 176, 246, 0.2);
+  }
+  .cose-input::placeholder {
+    color: #AFAFAF;
+    font-style: italic;
+  }
+
+  /* Duolingo Pill Headings */
+  .heading-pill {
+    position: relative;
+    display: inline-block;
+  }
+  .heading-pill::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #58CC02;
+    border-radius: 9999px;
+  }
+}
+
+/* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.4);
+  background: #E5E5E5;
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.7);
+  background: #AFAFAF;
 }
-

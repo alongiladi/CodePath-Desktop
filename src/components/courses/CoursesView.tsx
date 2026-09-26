@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Course, UserProfile, NavScreen } from '../../types';
 import { COURSES } from '../../data/mockData';
 import { ProgressBar } from '../common/ProgressBar';
-import { Badge } from '../common/Badge';
 import { CourseDetailModal } from './CourseDetailModal';
+import { CoseMascot } from '../common/CoseMascot';
 import { 
   Play, 
   Terminal, 
@@ -12,12 +12,10 @@ import {
   Layout, 
   GitBranch, 
   Gamepad2, 
-  Clock, 
-  BookOpen, 
   Search, 
-  CheckCircle2, 
+  Filter,
   ChevronRight,
-  Filter
+  BookOpen
 } from 'lucide-react';
 import { soundFx } from '../../utils/sound';
 
@@ -50,12 +48,12 @@ export const CoursesView: React.FC<CoursesViewProps> = ({ user, onNavigate }) =>
 
   const getCourseIcon = (iconName: string) => {
     switch (iconName) {
-      case 'Terminal': return <Terminal className="w-6 h-6 text-indigo-500" />;
-      case 'Code': return <Code2 className="w-6 h-6 text-sky-500" />;
-      case 'Database': return <Database className="w-6 h-6 text-emerald-500" />;
-      case 'Layout': return <Layout className="w-6 h-6 text-amber-500" />;
-      case 'GitBranch': return <GitBranch className="w-6 h-6 text-rose-500" />;
-      default: return <Gamepad2 className="w-6 h-6 text-purple-500" />;
+      case 'Terminal': return <Terminal className="w-6 h-6 text-[#58A700]" />;
+      case 'Code': return <Code2 className="w-6 h-6 text-[#1CB0F6]" />;
+      case 'Database': return <Database className="w-6 h-6 text-[#58A700]" />;
+      case 'Layout': return <Layout className="w-6 h-6 text-[#FF9600]" />;
+      case 'GitBranch': return <GitBranch className="w-6 h-6 text-[#FF4B4B]" />;
+      default: return <Gamepad2 className="w-6 h-6 text-[#CE82FF]" />;
     }
   };
 
@@ -64,43 +62,42 @@ export const CoursesView: React.FC<CoursesViewProps> = ({ user, onNavigate }) =>
     if (course.id === 'python-beginners') {
       onNavigate('lesson', { lessonId: user.activeLessonId || 'python-13', courseId: course.id });
     } else {
-      // Open course syllabus modal to see available modules
       setInspectedCourse(course);
     }
   };
 
   return (
-    <div id="courses-screen" className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div id="courses-screen" className="space-y-8 max-w-6xl mx-auto pb-20">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3C3C3C] tracking-tight">
             Learning Paths & Curricula
-          </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          </h1>
+          <p className="text-sm text-[#777777] font-semibold mt-1">
             Choose your programming discipline with step-by-step interactive exercises and immediate feedback.
           </p>
         </div>
 
         {/* Search bar */}
         <div className="relative w-full md:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#AFAFAF] absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             id="courses-search-input"
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search language or skill..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="cose-input w-full pl-10 pr-4 text-xs sm:text-sm"
           />
         </div>
       </div>
 
       {/* Filter Tag Pills */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-        <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-1 mr-1">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <span className="text-xs font-extrabold uppercase text-[#AFAFAF] flex items-center gap-1 mr-1">
           <Filter className="w-3.5 h-3.5" />
-          Filter:
+          FILTER:
         </span>
         {filterTags.map((tag) => (
           <button
@@ -110,10 +107,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({ user, onNavigate }) =>
               soundFx.playClick();
               setSelectedTag(tag);
             }}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
               selectedTag === tag
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                ? 'bg-[#58CC02] text-white shadow-xs'
+                : 'bg-white text-[#777777] border-2 border-[#E5E5E5] hover:border-[#AFAFAF]'
             }`}
           >
             {tag}
@@ -124,116 +121,74 @@ export const CoursesView: React.FC<CoursesViewProps> = ({ user, onNavigate }) =>
       {/* Course Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCourses.map((course) => {
-          // Calculate progress
           const allLessons = course.modules.flatMap((m) => m.lessons);
           const completedCount = allLessons.filter((l) => user.completedLessons.includes(l.id)).length;
           const progressPercent = course.id === 'python-beginners' 
             ? Math.round((12 / 28) * 100) 
             : Math.round((completedCount / (course.totalLessons || 1)) * 100);
-          
-          const hasStarted = progressPercent > 0;
 
           return (
             <div
               key={course.id}
               id={`course-card-${course.id}`}
-              className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700 transition-all flex flex-col justify-between group"
+              className="cose-card cose-card-hover p-6 flex flex-col justify-between group"
             >
-              <div>
-                {/* Header row: Icon & Badges */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/80 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-[14px] bg-[#F7F7F7] border-2 border-[#E5E5E5] flex items-center justify-center">
                     {getCourseIcon(course.iconName)}
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Badge variant={course.badge === 'Popular' ? 'purple' : 'primary'} size="sm">
+                  {course.badge && (
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FFFBE6] text-[#CC9900] border border-[#FFE885]">
                       {course.badge}
-                    </Badge>
-                    <Badge variant="outline" size="sm">
-                      {course.difficulty}
-                    </Badge>
-                  </div>
+                    </span>
+                  )}
                 </div>
 
-                {/* Course Title & Description */}
-                <h3 className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                  {course.title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 mt-1.5 leading-relaxed">
-                  {course.description}
-                </p>
+                <div>
+                  <h2 className="text-lg font-extrabold text-[#3C3C3C] group-hover:text-[#58CC02] transition-colors">
+                    {course.title}
+                  </h2>
+                  <p className="text-xs text-[#777777] font-semibold mt-1 line-clamp-2 leading-relaxed">
+                    {course.description}
+                  </p>
+                </div>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {course.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                <div className="space-y-1.5 pt-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-[#777777]">
+                    <span>{course.totalLessons} Lessons • {course.estimatedHours} hrs</span>
+                    <span className="text-[#58A700]">{progressPercent}%</span>
+                  </div>
+                  <ProgressBar value={progressPercent} size="sm" color="green" />
                 </div>
               </div>
 
-              {/* Progress & Action Bottom Section */}
-              <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                {/* Metrics */}
-                <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  <span className="flex items-center gap-1">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    {course.totalLessons} Lessons
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" />
-                    ~{course.estimatedHours} Hours
-                  </span>
-                </div>
-
-                {/* Progress bar */}
-                <div className="space-y-1">
-                  <div className="flex justify-between text-[11px] font-bold">
-                    <span className="text-slate-500">Progress</span>
-                    <span className="text-indigo-600 dark:text-indigo-400">
-                      {progressPercent}%
-                    </span>
-                  </div>
-                  <ProgressBar value={progressPercent} color="indigo" size="sm" />
-                </div>
-
-                {/* Buttons */}
-                <div className="flex items-center gap-2 pt-1">
-                  <button
-                    id={`btn-course-action-${course.id}`}
-                    onClick={() => handleStartOrContinue(course)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-xs transition-colors"
-                  >
-                    <Play className="w-3.5 h-3.5 fill-white" />
-                    <span>{hasStarted ? 'Continue Learning' : 'Start Learning'}</span>
-                  </button>
-                  <button
-                    id={`btn-course-syllabus-${course.id}`}
-                    onClick={() => setInspectedCourse(course)}
-                    title="View full curriculum syllabus"
-                    className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
+              <div className="pt-5 mt-4 border-t-2 border-[#E5E5E5]">
+                <button
+                  onClick={() => handleStartOrContinue(course)}
+                  className="w-full btn-primary text-xs font-extrabold !py-2.5"
+                >
+                  <Play className="w-3.5 h-3.5 fill-white" />
+                  <span>{progressPercent > 0 ? 'Continue Path' : 'Start Path'}</span>
+                </button>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Course Detail Modal */}
-      <CourseDetailModal
-        course={inspectedCourse}
-        isOpen={!!inspectedCourse}
-        onClose={() => setInspectedCourse(null)}
-        user={user}
-        onNavigate={onNavigate}
-      />
+      {/* Syllabus Modal */}
+      {inspectedCourse && (
+        <CourseDetailModal
+          course={inspectedCourse}
+          user={user}
+          onClose={() => setInspectedCourse(null)}
+          onStartLesson={(lessonId) => {
+            setInspectedCourse(null);
+            onNavigate('lesson', { lessonId, courseId: inspectedCourse.id });
+          }}
+        />
+      )}
     </div>
   );
 };

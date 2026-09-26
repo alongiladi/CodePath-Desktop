@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
-import { UserProfile, NavScreen } from '../../types';
+import { UserProfile } from '../../types';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { 
   User, 
-  Moon, 
-  Sun, 
   Volume2, 
   VolumeX, 
   RotateCcw, 
   Target, 
-  Type, 
-  ShieldCheck, 
+  Languages,
   Check, 
-  AlertTriangle,
-  Languages 
+  AlertTriangle 
 } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { soundFx } from '../../utils/sound';
@@ -29,8 +25,6 @@ interface SettingsViewProps {
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   user,
-  isDarkMode,
-  onToggleDarkMode,
   onToggleSound,
   onUpdateUser,
   onResetData,
@@ -55,11 +49,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     onUpdateUser((prev) => ({ ...prev, dailyGoalMinutes: minutes }));
   };
 
-  const handleSelectFontSize = (size: 'sm' | 'md' | 'lg') => {
-    soundFx.playClick();
-    onUpdateUser((prev) => ({ ...prev, editorFontSize: size }));
-  };
-
   const handleConfirmReset = () => {
     soundFx.playClick();
     setIsConfirmResetOpen(false);
@@ -67,41 +56,41 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   };
 
   return (
-    <div id="settings-screen" className="max-w-4xl mx-auto space-y-6 pb-20">
+    <div id="settings-screen" className="max-w-4xl mx-auto space-y-8 pb-20">
       <div>
-        <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3C3C3C]">
           {t('settingsTitle')}
-        </h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        </h1>
+        <p className="text-sm text-[#777777] font-semibold mt-1">
           {t('settingsSubtitle')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Profile Card */}
-        <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-5">
-          <div className="flex items-center gap-3">
+        <div className="cose-card p-6 space-y-5">
+          <div className="flex items-center gap-3.5">
             <img
               src={user.avatar}
               alt={user.name}
-              className="w-14 h-14 rounded-2xl object-cover border-2 border-indigo-500/40 shadow-sm"
+              className="w-14 h-14 rounded-full object-cover border-2 border-[#58CC02] shadow-xs"
             />
             <div>
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">
+              <h2 className="font-extrabold text-base text-[#3C3C3C]">
                 {user.name}
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              </h2>
+              <p className="text-xs text-[#777777] font-semibold">
                 {user.email}
               </p>
-              <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
-                Level: {user.level} ({user.xp.toLocaleString()} XP)
+              <span className="inline-block mt-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#FFFBE6] text-[#CC9900] border border-[#FFE885]">
+                Level {user.level} ({user.xp.toLocaleString()} XP)
               </span>
             </div>
           </div>
 
           <form onSubmit={handleSaveProfile} className="space-y-4 pt-2">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#777777] mb-1.5">
                 {t('settingsDisplayName')}
               </label>
               <input
@@ -109,7 +98,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 type="text"
                 value={nameInput}
                 onChange={(e) => setNameInput(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="cose-input w-full text-sm"
                 placeholder="Your display name"
               />
             </div>
@@ -118,12 +107,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <button
                 type="submit"
                 id="save-profile-btn"
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                className="btn-primary text-xs font-extrabold !py-2 !px-4"
               >
                 {t('buttonSave')}
               </button>
               {isSaved && (
-                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1 animate-fade-in">
+                <span className="text-xs font-extrabold text-[#58A700] flex items-center gap-1 animate-fadeIn">
                   <Check className="w-3.5 h-3.5" /> {isHe ? 'נשמר בהצלחה!' : 'Saved!'}
                 </span>
               )}
@@ -131,218 +120,143 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </form>
 
           {/* Daily Goal Setting */}
-          <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div className="space-y-3 pt-3 border-t-2 border-[#E5E5E5]">
             <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+              <Target className="w-4 h-4 text-[#58CC02]" />
+              <h3 className="font-extrabold text-sm text-[#3C3C3C]">
                 {t('settingsDailyGoal')}
-              </h4>
+              </h3>
             </div>
-
-            <div className="grid grid-cols-4 gap-2">
-              {[5, 15, 30, 45].map((mins) => (
+            <div className="grid grid-cols-3 gap-2">
+              {[10, 15, 20].map((mins) => (
                 <button
                   key={mins}
-                  id={`goal-option-${mins}`}
+                  type="button"
                   onClick={() => handleSelectGoal(mins)}
-                  className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  className={`py-2 px-3 rounded-[12px] border-2 font-extrabold text-xs transition-all cursor-pointer ${
                     user.dailyGoalMinutes === mins
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                      ? 'bg-[#DBF8C5] border-[#58CC02] text-[#58A700]'
+                      : 'bg-white border-[#E5E5E5] text-[#777777] hover:border-[#AFAFAF]'
                   }`}
                 >
-                  {mins} {isHe ? 'דק׳' : 'mins'}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Editor Font Size */}
-          <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <div className="flex items-center gap-2">
-              <Type className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white">
-                {t('settingsEditorFontSize')}
-              </h4>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              {(['sm', 'md', 'lg'] as const).map((size) => (
-                <button
-                  key={size}
-                  id={`fontsize-option-${size}`}
-                  onClick={() => handleSelectFontSize(size)}
-                  className={`py-2 rounded-xl text-xs font-bold uppercase border transition-all cursor-pointer ${
-                    user.editorFontSize === size
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                  }`}
-                >
-                  {size === 'sm' ? (isHe ? 'קומפקטי' : 'Compact') : size === 'md' ? (isHe ? 'רגיל' : 'Default') : (isHe ? 'גדול' : 'Large')}
+                  {mins} min/day
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Appearance, Language & Sound Settings */}
-        <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-5">
-          <h4 className="font-bold text-sm text-slate-900 dark:text-white">
-            {isHe ? 'שפה, מראה וקול' : 'Language, Appearance & Audio'}
-          </h4>
-
+        {/* Preferences & Language Card */}
+        <div className="cose-card p-6 space-y-5">
+          {/* Language Switcher */}
           <div className="space-y-3">
-            {/* Language Selection */}
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 space-y-2">
-              <div className="flex items-center gap-2">
-                <Languages className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                <span className="text-xs font-bold text-slate-900 dark:text-white">
-                  {t('settingsLanguage')}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 pt-1">
-                <button
-                  id="settings-lang-en-btn"
-                  onClick={() => {
-                    soundFx.playClick();
-                    setLanguage('en');
-                  }}
-                  className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
-                    language === 'en'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300'
-                  }`}
-                >
-                  <span>🇺🇸</span>
-                  <span>{t('settingsEnglish')}</span>
-                </button>
-
-                <button
-                  id="settings-lang-he-btn"
-                  onClick={() => {
-                    soundFx.playClick();
-                    setLanguage('he');
-                  }}
-                  className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
-                    language === 'he'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300'
-                  }`}
-                >
-                  <span>🇮🇱</span>
-                  <span>{t('settingsHebrew')}</span>
-                </button>
-              </div>
+            <div className="flex items-center gap-2">
+              <Languages className="w-4 h-4 text-[#1CB0F6]" />
+              <h3 className="font-extrabold text-sm text-[#3C3C3C]">
+                {t('languageSettingTitle')}
+              </h3>
             </div>
-
-            {/* Dark Mode */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
-              <div className="flex items-center gap-3">
-                {isDarkMode ? (
-                  <Moon className="w-5 h-5 text-indigo-400" />
-                ) : (
-                  <Sun className="w-5 h-5 text-amber-500" />
-                )}
-                <div>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">
-                    {t('settingsDarkMode')}
-                  </div>
-                  <div className="text-[11px] text-slate-500">
-                    {isDarkMode ? (isHe ? 'מצב כהה פעיל' : 'Dark mode enabled') : (isHe ? 'מצב בהיר פעיל' : 'Light mode enabled')}
-                  </div>
-                </div>
-              </div>
-
+            <p className="text-xs text-[#777777] font-semibold">
+              {t('languageSettingDesc')}
+            </p>
+            <div className="grid grid-cols-2 gap-2">
               <button
-                id="settings-theme-toggle-btn"
-                onClick={onToggleDarkMode}
-                className={`w-12 h-6 rounded-full transition-colors relative p-0.5 cursor-pointer ${
-                  isDarkMode ? 'bg-indigo-600' : 'bg-slate-300'
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setLanguage('en');
+                }}
+                className={`py-2.5 px-3 rounded-[12px] border-2 font-extrabold text-xs transition-all cursor-pointer ${
+                  language === 'en'
+                    ? 'bg-[#EBF8FF] border-[#1CB0F6] text-[#1CB0F6]'
+                    : 'bg-white border-[#E5E5E5] text-[#777777] hover:border-[#AFAFAF]'
                 }`}
               >
-                <div
-                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                    isDarkMode ? (isRtl ? '-translate-x-6' : 'translate-x-6') : 'translate-x-0'
-                  }`}
-                />
+                🇺🇸 {t('langEnLabel')}
               </button>
-            </div>
-
-            {/* Audio Effects */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
-              <div className="flex items-center gap-3">
-                {user.soundEnabled ? (
-                  <Volume2 className="w-5 h-5 text-emerald-500" />
-                ) : (
-                  <VolumeX className="w-5 h-5 text-slate-400" />
-                )}
-                <div>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">
-                    {t('settingsSoundEffects')}
-                  </div>
-                  <div className="text-[11px] text-slate-500">
-                    {user.soundEnabled ? (isHe ? 'צלילים פועלים' : 'Tactile clicks & chimes') : (isHe ? 'השתק הכל' : 'Muted')}
-                  </div>
-                </div>
-              </div>
-
               <button
-                id="settings-sound-toggle-btn"
-                onClick={onToggleSound}
-                className={`w-12 h-6 rounded-full transition-colors relative p-0.5 cursor-pointer ${
-                  user.soundEnabled ? 'bg-indigo-600' : 'bg-slate-300'
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setLanguage('he');
+                }}
+                className={`py-2.5 px-3 rounded-[12px] border-2 font-extrabold text-xs transition-all cursor-pointer ${
+                  language === 'he'
+                    ? 'bg-[#EBF8FF] border-[#1CB0F6] text-[#1CB0F6]'
+                    : 'bg-white border-[#E5E5E5] text-[#777777] hover:border-[#AFAFAF]'
                 }`}
               >
-                <div
-                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                    user.soundEnabled ? (isRtl ? '-translate-x-6' : 'translate-x-6') : 'translate-x-0'
-                  }`}
-                />
+                🇮🇱 {t('langHeLabel')}
               </button>
             </div>
           </div>
 
-          {/* Reset Workspace */}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+          {/* Sound Toggle */}
+          <div className="space-y-3 pt-3 border-t-2 border-[#E5E5E5]">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-extrabold text-sm text-[#3C3C3C]">
+                  Sound Effects
+                </h4>
+                <p className="text-xs text-[#777777] font-semibold">
+                  Tactile feedback on clicks, successes, and errors.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={onToggleSound}
+                className="btn-outline !py-2 !px-3"
+              >
+                {user.soundEnabled ? <Volume2 className="w-4 h-4 text-[#58CC02]" /> : <VolumeX className="w-4 h-4 text-[#AFAFAF]" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Reset Progress */}
+          <div className="space-y-3 pt-3 border-t-2 border-[#E5E5E5]">
+            <div>
+              <h4 className="font-extrabold text-sm text-[#FF4B4B]">
+                Danger Zone
+              </h4>
+              <p className="text-xs text-[#777777] font-semibold">
+                Reset your lesson progress and experience points.
+              </p>
+            </div>
             <button
-              id="reset-progress-trigger-btn"
+              type="button"
               onClick={() => setIsConfirmResetOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold transition-colors w-full justify-center cursor-pointer"
+              className="btn-danger text-xs font-extrabold !py-2 !px-3"
             >
-              <RotateCcw className="w-4 h-4" />
-              <span>{t('settingsResetProgress')}</span>
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset All Learning Data</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Confirm Reset Modal */}
       <Modal
         isOpen={isConfirmResetOpen}
         onClose={() => setIsConfirmResetOpen(false)}
-        title={t('settingsResetProgress')}
-        subtitle={isHe ? 'פעולה זו תשחזר את נתוני הדמו הראשוניים של אלכס' : "This will restore Alex's initial 12 completed lessons and 1,240 XP."}
-        maxWidth="sm"
+        title="Reset All Progress?"
+        subtitle="This will clear your completed lessons and streak."
       >
         <div className="space-y-4">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-900 dark:text-amber-200 text-xs">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
-            <span>{t('settingsResetConfirm')}</span>
-          </div>
-
-          <div className="flex items-center justify-end gap-2 pt-2">
+          <p className="text-xs text-[#777777] font-semibold">
+            Are you sure you want to reset your account progress? This action cannot be undone.
+          </p>
+          <div className="flex justify-end gap-3">
             <button
               onClick={() => setIsConfirmResetOpen(false)}
-              className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 cursor-pointer"
+              className="btn-outline text-xs"
             >
-              {t('buttonCancel')}
+              Cancel
             </button>
             <button
-              id="confirm-reset-data-btn"
               onClick={handleConfirmReset}
-              className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold cursor-pointer"
+              className="btn-danger text-xs"
             >
-              {isHe ? 'אשר איפוס' : 'Confirm Reset'}
+              Confirm Reset
             </button>
           </div>
         </div>

@@ -2,16 +2,22 @@ import React from 'react';
 
 interface ProgressBarProps {
   value: number; // 0 to 100
-  color?: 'indigo' | 'emerald' | 'amber' | 'blue';
+  color?: 'green' | 'indigo' | 'orange' | 'yellow' | 'red';
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
   id?: string;
 }
 
+/**
+ * CosePath Duolingo-style Progress Bar
+ * Height: 12-16px, Track: #E5E5E5, Radius: 9999px (pill)
+ * Fill: #58CC02 (Green) / #FF9600 (Streak Orange)
+ * Fill animation: 320ms ease-out
+ */
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   value,
-  color = 'indigo',
+  color = 'green',
   size = 'md',
   showLabel = false,
   className = '',
@@ -20,31 +26,43 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   const clamped = Math.min(100, Math.max(0, value));
 
   const heightClasses = {
-    sm: 'h-1.5',
-    md: 'h-2.5',
-    lg: 'h-3.5',
+    sm: 'h-2.5',
+    md: 'h-4',
+    lg: 'h-5',
   };
 
-  const colorClasses = {
-    indigo: 'bg-indigo-600 dark:bg-indigo-500',
-    emerald: 'bg-emerald-500 dark:bg-emerald-400',
-    amber: 'bg-amber-500 dark:bg-amber-400',
-    blue: 'bg-sky-500 dark:bg-sky-400',
-  };
+  const colorStyles = {
+    green: { bg: '#58CC02', highlight: '#89E219' },
+    indigo: { bg: '#1CB0F6', highlight: '#70D6FF' },
+    orange: { bg: '#FF9600', highlight: '#FFB84D' },
+    yellow: { bg: '#FFC800', highlight: '#FFE066' },
+    red: { bg: '#FF4B4B', highlight: '#FF8080' },
+  }[color] || { bg: '#58CC02', highlight: '#89E219' };
 
   return (
     <div id={id} className={`w-full ${className}`}>
       {showLabel && (
-        <div className="flex justify-between items-center text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
-          <span>Progress</span>
-          <span className="font-semibold text-slate-800 dark:text-slate-200">{Math.round(clamped)}%</span>
+        <div className="flex justify-between items-center text-xs font-extrabold text-[#777777] mb-1.5">
+          <span className="uppercase tracking-wider">Progress</span>
+          <span className="text-[#3C3C3C]">{Math.round(clamped)}%</span>
         </div>
       )}
-      <div className={`w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden ${heightClasses[size]}`}>
+      <div className={`w-full rounded-full bg-[#E5E5E5] p-0.5 overflow-hidden ${heightClasses[size]}`}>
         <div
-          className={`${heightClasses[size]} ${colorClasses[color]} transition-all duration-500 ease-out rounded-full`}
-          style={{ width: `${clamped}%` }}
-        />
+          className={`${heightClasses[size]} rounded-full transition-all duration-300 ease-out relative`}
+          style={{
+            width: `${clamped}%`,
+            backgroundColor: colorStyles.bg,
+          }}
+        >
+          {/* Subtle top pill reflection shine */}
+          {clamped > 5 && (
+            <div
+              className="absolute top-0.5 left-2 right-2 h-1 rounded-full opacity-40"
+              style={{ backgroundColor: colorStyles.highlight }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

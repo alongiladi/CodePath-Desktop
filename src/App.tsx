@@ -38,10 +38,9 @@ export default function App() {
     resetAllData,
     toasts,
     removeToast,
-    addToast,
   } = useLearningState();
 
-  const { isRtl, language } = useLanguage();
+  const { isRtl } = useLanguage();
   const { effectiveUserId, currentUser } = useAuth();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -57,7 +56,6 @@ export default function App() {
         email: currentUser?.email || user.email,
         avatar: currentUser?.photoURL || user.avatar,
       }).catch((err) => {
-        // Non-blocking sync error
         console.warn('Background sync:', err);
       });
     }
@@ -74,133 +72,133 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors">
-        {/* Top Navbar */}
-        <TopBar
+    <div className="min-h-screen bg-white text-[#3C3C3C] flex flex-col selection:bg-[#DBF8C5] selection:text-[#58A700]">
+      {/* Top Navigation Bar */}
+      <TopBar
+        currentScreen={currentScreen}
+        user={user}
+        isDarkMode={false}
+        onToggleDarkMode={toggleDarkMode}
+        onToggleSound={toggleSound}
+        onOpenMentor={() => handleOpenMentor()}
+        onToggleMobileMenu={() => setIsMobileMenuOpen(true)}
+        onNavigate={navigateTo}
+      />
+
+      <div className="flex-1 flex overflow-hidden">
+        {/* Desktop Sidebar & Mobile Drawer Navigation */}
+        <Sidebar
           currentScreen={currentScreen}
+          onNavigate={navigateTo}
+          isMobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
+          onOpenMentor={() => handleOpenMentor()}
           user={user}
-          isDarkMode={isDarkMode}
-          onToggleDarkMode={toggleDarkMode}
-          onToggleSound={toggleSound}
-          onOpenMentor={() => handleOpenMentor()}
-          onToggleMobileMenu={() => setIsMobileMenuOpen(true)}
-          onNavigate={navigateTo}
         />
 
-        <div className="flex-1 flex overflow-hidden">
-          {/* Desktop Sidebar & Mobile Drawer Navigation */}
-          <Sidebar
-            currentScreen={currentScreen}
-            onNavigate={navigateTo}
-            isMobileOpen={isMobileMenuOpen}
-            onCloseMobile={() => setIsMobileMenuOpen(false)}
-            onOpenMentor={() => handleOpenMentor()}
-            user={user}
-          />
+        {/* Main Workspace Screen Content */}
+        <main className={`flex-1 overflow-y-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 lg:pb-12 ${isRtl ? 'lg:mr-64' : 'lg:ml-64'}`}>
+          {currentScreen === 'dashboard' && (
+            <DashboardView
+              user={user}
+              onNavigate={navigateTo}
+              onOpenMentor={handleOpenMentor}
+            />
+          )}
 
-          {/* Main Workspace Screen Content */}
-          <main className={`flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 pb-24 lg:pb-12 ${isRtl ? 'lg:mr-64' : 'lg:ml-64'}`}>
-            {currentScreen === 'dashboard' && (
-              <DashboardView
-                user={user}
-                onNavigate={navigateTo}
-                onOpenMentor={handleOpenMentor}
-              />
-            )}
+          {currentScreen === 'courses' && (
+            <CoursesView
+              user={user}
+              onNavigate={navigateTo}
+            />
+          )}
 
-            {currentScreen === 'courses' && (
-              <CoursesView
-                user={user}
-                onNavigate={navigateTo}
-              />
-            )}
+          {currentScreen === 'lesson' && (
+            <LessonView
+              lessonId={activeLessonId}
+              user={user}
+              onNavigate={navigateTo}
+              onCompleteLesson={completeLesson}
+              onOpenMentor={handleOpenMentor}
+            />
+          )}
 
-            {currentScreen === 'lesson' && (
-              <LessonView
-                lessonId={activeLessonId}
-                user={user}
-                onNavigate={navigateTo}
-                onCompleteLesson={completeLesson}
-                onOpenMentor={handleOpenMentor}
-              />
-            )}
+          {currentScreen === 'practice' && (
+            <CodePracticeView
+              exerciseId={activeExerciseId}
+              user={user}
+              onNavigate={navigateTo}
+              onCompleteExercise={completeExercise}
+              onOpenMentor={handleOpenMentor}
+            />
+          )}
 
-            {currentScreen === 'practice' && (
-              <CodePracticeView
-                exerciseId={activeExerciseId}
-                user={user}
-                onNavigate={navigateTo}
-                onCompleteExercise={completeExercise}
-                onOpenMentor={handleOpenMentor}
-              />
-            )}
+          {currentScreen === 'architecture' && (
+            <ArchitectureLabView
+              user={user}
+              onNavigate={navigateTo}
+              onOpenMentor={handleOpenMentor}
+              onCompleteChallenge={completeArchitectureChallenge}
+            />
+          )}
 
-            {currentScreen === 'architecture' && (
-              <ArchitectureLabView
-                user={user}
-                onNavigate={navigateTo}
-                onOpenMentor={handleOpenMentor}
-                onCompleteChallenge={completeArchitectureChallenge}
-              />
-            )}
+          {currentScreen === 'leaderboard' && (
+            <LeaderboardView
+              user={user}
+              onNavigateToArchitecture={() => navigateTo('architecture')}
+              onNavigateToPractice={() => navigateTo('practice')}
+            />
+          )}
 
-            {currentScreen === 'leaderboard' && (
-              <LeaderboardView
-                user={user}
-                onNavigateToArchitecture={() => navigateTo('architecture')}
-                onNavigateToPractice={() => navigateTo('practice')}
-              />
-            )}
+          {currentScreen === 'quiz' && (
+            <QuizView
+              quizId={activeQuizId}
+              user={user}
+              onNavigate={navigateTo}
+              onRecordScore={recordQuizScore}
+              onOpenMentor={handleOpenMentor}
+            />
+          )}
 
-            {currentScreen === 'quiz' && (
-              <QuizView
-                quizId={activeQuizId}
-                user={user}
-                onNavigate={navigateTo}
-                onRecordScore={recordQuizScore}
-                onOpenMentor={handleOpenMentor}
-              />
-            )}
+          {(currentScreen === 'achievements' || currentScreen === 'stats') && (
+            <StatsAndAchievementsView
+              user={user}
+              onNavigate={navigateTo}
+            />
+          )}
 
-            {(currentScreen === 'achievements' || currentScreen === 'stats') && (
-              <StatsAndAchievementsView
-                user={user}
-                onNavigate={navigateTo}
-              />
-            )}
-
-            {currentScreen === 'settings' && (
-              <SettingsView
-                user={user}
-                isDarkMode={isDarkMode}
-                onToggleDarkMode={toggleDarkMode}
-                onToggleSound={toggleSound}
-                onUpdateUser={setUser}
-                onResetData={resetAllData}
-              />
-            )}
-          </main>
-        </div>
-
-        {/* Mobile Persistent Bottom Bar */}
-        <BottomNav
-          currentScreen={currentScreen}
-          onNavigate={navigateTo}
-          onOpenMentor={() => handleOpenMentor()}
-        />
-
-        {/* AI Code Mentor Drawer */}
-        <CodeMentorDrawer
-          isOpen={isMentorOpen}
-          onClose={handleCloseMentor}
-          initialPrompt={mentorInitialPrompt}
-        />
-
-        {/* Global Toast Notifications */}
-        <ToastContainer toasts={toasts} onDismiss={removeToast} />
+          {currentScreen === 'settings' && (
+            <SettingsView
+              user={user}
+              isDarkMode={false}
+              onToggleDarkMode={toggleDarkMode}
+              onToggleSound={toggleSound}
+              onUpdateUser={setUser}
+              onResetData={resetAllData}
+            />
+          )}
+        </main>
       </div>
+
+      {/* Mobile Persistent Bottom Bar */}
+      <BottomNav
+        currentScreen={currentScreen}
+        onNavigate={navigateTo}
+        onOpenMentor={() => handleOpenMentor()}
+      />
+
+      {/* AI Code Mentor Drawer */}
+      <CodeMentorDrawer
+        isOpen={isMentorOpen}
+        onClose={handleCloseMentor}
+        initialPrompt={mentorInitialPrompt}
+      />
+
+      {/* Global Toast Notifications */}
+      <ToastContainer
+        toasts={toasts}
+        onDismiss={removeToast}
+      />
     </div>
   );
 }
-

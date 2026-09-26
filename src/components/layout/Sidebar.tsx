@@ -13,11 +13,10 @@ import {
   ChevronRight,
   ChevronLeft,
   Layers,
-  Landmark,
   Award,
-  Brain,
   Code2
 } from 'lucide-react';
+import { CoseMascot } from '../common/CoseMascot';
 
 interface SidebarProps {
   currentScreen: NavScreen;
@@ -60,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       screen: 'architecture',
       label: t('navArchitecture'),
       icon: <Layers className="w-5 h-5" />,
-      badge: isRtl ? 'מעבדת ארכיטקטורה' : 'Quality Lab',
+      badge: isRtl ? 'ארכיטקטורה' : 'Quality Lab',
     },
     {
       screen: 'leaderboard',
@@ -86,8 +85,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const desktopPosClass = isRtl
-    ? 'right-0 border-l border-slate-200/80 dark:border-slate-800'
-    : 'left-0 border-r border-slate-200/80 dark:border-slate-800';
+    ? 'right-0 border-l-2 border-[#E5E5E5]'
+    : 'left-0 border-r-2 border-[#E5E5E5]';
 
   const mobileTransformClass = isMobileOpen
     ? 'translate-x-0'
@@ -102,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div
           id="mobile-sidebar-backdrop"
           onClick={onCloseMobile}
-          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden"
           aria-hidden="true"
         />
       )}
@@ -110,54 +109,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Main Sidebar */}
       <aside
         id="app-sidebar"
-        className={`fixed top-0 bottom-0 ${desktopPosClass} z-40 w-64 bg-white dark:bg-slate-900 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${mobileTransformClass}`}
+        className={`fixed top-0 bottom-0 ${desktopPosClass} z-40 w-64 bg-white flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${mobileTransformClass} select-none`}
       >
         {/* Brand Header */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="p-5 border-b-2 border-[#E5E5E5]">
           <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => handleNavClick('dashboard')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-              <Code2 className="w-6 h-6 stroke-[2.2]" />
-            </div>
+            <CoseMascot mood="happy" size="sm" />
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white">
-                  Code<span className="text-indigo-600 dark:text-indigo-400">Path</span>
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                  {isRtl ? 'אינטראקטיבי' : 'Interactive'}
+                <span className="font-extrabold text-xl tracking-tight text-[#3C3C3C]">
+                  Cose<span className="text-[#58CC02]">Path</span>
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                {isRtl ? 'תכנות מעשי צעד-אחר-צעד' : 'Step-by-step programming'}
+              <p className="text-[11px] text-[#777777] font-semibold">
+                {isRtl ? 'ללמוד לתכנת בכיף' : 'Learn code with joy'}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Quick Streak & XP banner */}
-        <div className="px-4 py-3 mx-4 mt-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-violet-500/10 border border-amber-500/20 dark:border-amber-500/30">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Flame className="w-4 h-4 text-amber-500 fill-amber-500/30" />
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                {user.streak} {t('topbarStreak')}
-              </span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-indigo-500 fill-indigo-500/30" />
-              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                {user.xp.toLocaleString()} XP
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* Navigation Links */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          <div className="px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            {t('platformMenu')}
-          </div>
-
+        <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = currentScreen === item.screen;
             return (
@@ -165,24 +137,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 key={item.screen}
                 id={`sidebar-link-${item.screen}`}
                 onClick={() => handleNavClick(item.screen)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer ${
+                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-[16px] text-sm font-extrabold uppercase tracking-wide transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 dark:shadow-none'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#DBF8C5] text-[#58A700] border-2 border-[#58CC02]'
+                    : 'text-[#777777] hover:bg-[#F7F7F7] hover:text-[#3C3C3C] border-2 border-transparent'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className={`${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`}>
+                  <span className={`${isActive ? 'text-[#58CC02]' : 'text-[#777777]'}`}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
                   <span
-                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                    className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
                       isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        ? 'bg-[#58CC02] text-white'
+                        : 'bg-[#F7F7F7] text-[#777777] border border-[#E5E5E5]'
                     }`}
                   >
                     {item.badge}
@@ -193,21 +165,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
           })}
 
           {/* AI Code Mentor Callout Card in Sidebar */}
-          <div className="pt-4">
-            <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-slate-800/90 border border-indigo-100 dark:border-slate-700/80 text-start">
+          <div className="pt-3">
+            <div className="p-3.5 rounded-[16px] bg-[#F7F7F7] border-2 border-[#E5E5E5] text-start">
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+                <div className="w-6 h-6 rounded-[8px] bg-[#1CB0F6] text-white flex items-center justify-center">
                   <Sparkles className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200">
+                <span className="text-xs font-extrabold text-[#3C3C3C]">
                   {t('topbarMentorBtn')}
                 </span>
-                <span className={`w-2 h-2 rounded-full bg-emerald-500 animate-pulse ${isRtl ? 'mr-auto' : 'ml-auto'}`} title="Online" />
+                <span className={`w-2 h-2 rounded-full bg-[#58CC02] animate-pulse ${isRtl ? 'mr-auto' : 'ml-auto'}`} title="Ready" />
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+              <p className="text-xs text-[#777777] mb-3 leading-relaxed font-semibold">
                 {isRtl
-                  ? 'נתקעת בתרגיל או בארכיטקטורה? בקש רמז עדין מבלי לחשוף את הפתרון המלא.'
-                  : 'Stuck on a problem or architecture? Ask for gentle hints without giving away the full answer.'}
+                  ? 'צריך רמז ידידותי? שאל את מנטור הקוד שלך!'
+                  : 'Need a gentle nudge? Ask your friendly Code Mentor!'}
               </p>
               <button
                 id="sidebar-open-mentor-btn"
@@ -215,7 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onOpenMentor();
                   if (onCloseMobile) onCloseMobile();
                 }}
-                className="w-full py-2 px-3 bg-white dark:bg-slate-700 hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:text-white dark:hover:text-white text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-slate-600 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                className="w-full btn-outline text-xs font-extrabold !py-2 !px-3"
               >
                 <span>{isRtl ? 'שאל את המנטור' : 'Ask Mentor'}</span>
                 {isRtl ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
@@ -225,31 +197,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* User Profile Card at Bottom */}
-        <div className="p-4 border-t border-slate-100 dark:border-slate-800/80">
+        <div className="p-3 border-t-2 border-[#E5E5E5]">
           <div
             id="sidebar-user-profile"
             onClick={() => handleNavClick('settings')}
-            className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer"
+            className="flex items-center gap-3 p-2 rounded-[14px] hover:bg-[#F7F7F7] border-2 border-transparent hover:border-[#E5E5E5] transition-all cursor-pointer"
           >
             <div className="relative">
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-10 h-10 rounded-full object-cover border-2 border-indigo-500/40"
+                className="w-10 h-10 rounded-full object-cover border-2 border-[#58CC02]"
               />
-              <span className={`absolute bottom-0 ${isRtl ? 'left-0' : 'right-0'} w-3 h-3 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900`} />
+              <span className={`absolute bottom-0 ${isRtl ? 'left-0' : 'right-0'} w-3 h-3 rounded-full bg-[#58CC02] border-2 border-white`} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                <span className="text-sm font-extrabold text-[#3C3C3C] truncate">
                   {user.name}
                 </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-300">
-                  {user.level}
+                <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#FFC800]/20 text-[#CC9900]">
+                  Lvl {user.level}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                {isRtl ? 'פייתון למתחילים' : 'Python Beginner'}
+              <p className="text-xs text-[#777777] truncate font-semibold">
+                {user.xp.toLocaleString()} XP
               </p>
             </div>
           </div>
@@ -258,4 +230,3 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </>
   );
 };
-
